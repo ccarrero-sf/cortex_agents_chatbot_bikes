@@ -95,3 +95,10 @@ You can ask questions where the anser will need an analytical response (SQL). Ex
 
 - What is the monthly sales for the Premium bike? Include the name
 
+![image](img/7_analytical_question.png)
+
+Or you can ask a question where the answer will be in the PDF documents:
+
+- What is the recommended oil for the Premium bike?
+
+![image](img/8_search_question.png)
