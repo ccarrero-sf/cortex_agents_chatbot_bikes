@@ -55,17 +55,13 @@ def snowflake_api_call(query: str, limit: int = 10):
         
         ##############  MAKE CHANGES HERE for your own services/yamls ##############
         "tools": [
-            {"tool_spec": {"type": "cortex_analyst_text_to_sql","name": "Sales Intelligence Analyst"}},
-            # {"tool_spec": {"type": "cortex_analyst_text_to_sql","name": "Sales Analyst"}},
-            # {"tool_spec": {"type": "cortex_search","name": "Maine Health Documents"}},
-            {"tool_spec": {"type": "cortex_search","name": "Sales Intelligence Search"}}
+            {"tool_spec": {"type": "cortex_analyst_text_to_sql","name": "Sales Analyst"}},
+            {"tool_spec": {"type": "cortex_search","name": "Product Search"}}
             
         ],
         "tool_resources": {
-            "Sales Intelligence Analyst": {"semantic_model_file": '@sales_intelligence.data.models/sales_metrics_model.yaml'},
-            # "Sales Analyst": {"semantic_model_file": '@ai.public.yaml/sales.yaml'},
-            # "Maine Health Documents": {"name": 'ai.public.my_search_service',"max_results": 5},
-            "Sales Intelligence Search": {"name": 'sales_intelligence.data.sales_conversation_search',"max_results": 5}
+            "Sales Analyst": {"semantic_model_file": '@CC_QUICKSTART_CORTEX_AGENTS.PUBLIC.semantic/sales_semantic.yaml'},
+             "Product Search": {"name": 'CC_QUICKSTART_CORTEX_AGENTS.PUBLIC.CC_SEARCH_SERVICE_CS',"max_results": 5}
         }}   
         ############################################################################
     

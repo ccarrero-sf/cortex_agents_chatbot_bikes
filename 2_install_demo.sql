@@ -122,7 +122,7 @@ COMMENT = '{"origin": "sf_chatbot",
 COPY FILES 
     INTO @STREAMLIT_STAGE
     FROM @CC_QUICKSTART_CORTEX_AGENTS.PUBLIC.git_repo_chatbot/branches/main/
-    FILES =('streamlit_chatbot.py', 'environment.yml');
+    FILES =('streamlit_chatbot.py', 'streamlit_agent.py', 'environment.yml');
 
 ALTER STAGE STREAMLIT_STAGE REFRESH;
 
@@ -214,4 +214,12 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE article_name_search_service
   );
 
 
-  
+  CREATE OR REPLACE STREAMLIT STREAMLIT_AGENT
+    ROOT_LOCATION = '@STREAMLIT_STAGE'
+    MAIN_FILE = 'streamlit_agent.py'
+    TITLE = 'PRODUCT AND SALES AGENT'
+    QUERY_WAREHOUSE = 'COMPUTE_WH'
+    COMMENT = '{"origin": "sf_agent",
+            "name": "agent",
+            "version": {"major": 1, "minor": 0},
+            "attributes": {"deployment": "sis"}}';  
