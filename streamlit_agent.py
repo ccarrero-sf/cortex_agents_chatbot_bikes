@@ -140,7 +140,7 @@ with stylable_container(key='myContainer',css_styles="""
             ################################################
             ##   Enter your main application code below   
             ################################################
-            st.header("AI Assistant")
+            st.header("PRODUCT AND SALES AGENT")
             st.write("Search your tables and/or documents with one simple ask")
 
             # Initialize session state

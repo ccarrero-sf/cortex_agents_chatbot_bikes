@@ -1,10 +1,14 @@
-## Build a Retrieval Augmented Generation (RAG) based LLM assistant using Streamlit, Snowflake Cortex Search and ML Observability
+## Build an Support Assistant Chatbot Leveraging PDF Docs and Sales Data using Cortex Agents
 
-This repository is an evolution of the quickstart [Build a Retrieval Augmented Generation (RAG) based LLM assistant using Streamlit and Snowflake Cortex Search](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/index.html?index=..%2F..index#0)
+This repository is an evolution of the quickstart [Build a Retrieval Augmented Generation (RAG) based LLM assistant using Streamlit and Snowflake Cortex Search](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/index.html?index=..%2F..index#0). It includes AI Observability for the Search App and also creates a new Agent App that is able to search both unstructured data (PDF documents about bikes and snow gear) and structured data (sales data about those articles).
+
+Big thanks to Jeff Carpenter for providing the Agent App within SIS.
 
 This new version includes:
 - Git integration: With this all the setup can be done with a single click
 - AI Observability: Embeed the code in an App class where Observability is added so we can see how the RAG App is performing
+- Create structured data about product sales
+- Create the Agent App that leverages Cortex Agents
 
 ### Setup
 
@@ -14,7 +18,7 @@ Follow these steps:
 
 - Click on Projects -> Worksheets
 - At the top rigth, click on + to add a new worksheet
-- Copy/paste the code from [1_setup_git_repol.sql](https://github.com/ccarrero-sf/ask_questions_to_your_own_documents_with_snowflake_cortex_search_and_trulens/blob/main/1_setup_git_repo.sql)
+- Copy/paste the code from [1_setup_git_repol.sql](https://github.com/ccarrero-sf/cortex_agents_chatbot_bikes/blob/main/1_setup_git_repo.sql)
 
 That code will:
 - Create a new database
@@ -44,9 +48,14 @@ This will:
 - Process PDF documents
 - Classify PDF documents using LLMs
 - Create Cortex Search Service that will be used by the RAG App to find relevant context
-- Create a Streamlit App from the code in the Git repository
+- Create a Streamlit App from the code in the Git repository to demo how RAG works
+- Create sales tables and fill with data
+- Enable Cortex Search in article table to help searching on structured data
+- Install the Agent App that leverages Cortex Agents
 
-The [Streamlit App](https://github.com/ccarrero-sf/ask_questions_to_your_own_documents_with_snowflake_cortex_search_and_trulens/blob/main/streamlit_chatbot.py) uses Trulens to provide observability for:
+#### 3. Search RAG App
+
+The [Streamlit RAG App](https://github.com/ccarrero-sf/cortex_agents_chatbot_bikes/blob/main/streamlit_chatbot.py) uses Trulens to provide observability for:
 
 - Context relevance
 - Answer relevance
@@ -68,6 +77,21 @@ You can also reach out to your Snowflake Account team in order to enable the App
 
 ![image](img/6_app_performance.png)
 
+Questions you can ask that are unique for those documents:
+- Is there any special lubricant to be used with the premium bike?
+- Does the mondracer infant bike need any special tool?
+- Is there any temperature to be considered with the premium bicycle?
+- What is the temperature to store the ski boots?
+- Where have the ski boots been tested and who tested them?
+- What is the price for the premiun bike
+
 NOTE: This is based in a Private Preview version. Things will be different once in Public Preview so this guide will be updated.
 
+#### 4. Use the Support Assistant Chatbot that leverages Cortex Agents
+
+In the Streamlit tab, click on PRODUCT AND SALES AGENT
+
+You can ask questions where the anser will need an analytical response (SQL). Example
+
+- What is the monthly sales for the Premium bike? Include the name
 
