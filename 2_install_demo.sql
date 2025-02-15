@@ -137,3 +137,81 @@ CREATE OR REPLACE STREAMLIT STREAMLIT_CHATBOT
             "version": {"major": 1, "minor": 0},
             "attributes": {"deployment": "sis"}}';  
 
+------- Setup for Analyst:
+
+CREATE OR REPLACE TABLE DIM_ARTICLE (
+    ARTICLE_ID INT PRIMARY KEY,
+    ARTICLE_NAME STRING,
+    ARTICLE_PRICE FLOAT  -- Fixed price for each article
+);
+
+insert into DIM_ARTICLE (ARTICLE_ID, ARTICLE_NAME, ARTICLE_PRICE)
+values 
+(1, 'Mondracer Infant Bike', 3000),
+(2, 'Premium Bycycle', 9000),
+(3, 'Ski Boots TDBootz Special', 600),
+(4, 'The Ultimate Downhill Bike', 10000),
+(5, 'The Xtreme Road Bike 105 SL', 8500),
+(6, 'Carver Skis', 790),
+(7, 'Outpiste Skis', 900),
+(8, 'Racing Fast Skis',950)
+;
+
+CREATE or replace TABLE DIM_CUSTOMER (
+    CUSTOMER_ID INT PRIMARY KEY,
+    CUSTOMER_NAME STRING,
+    CUSTOMER_REGION STRING
+);
+
+CREATE or replace TABLE FACT_SALES (
+    SALE_ID INT PRIMARY KEY,
+    ARTICLE_ID INT,
+    DATE_SALES DATE,
+    CUSTOMER_ID INT,
+    QUANTITY_SOLD INT,
+    TOTAL_PRICE FLOAT,
+    FOREIGN KEY (ARTICLE_ID) REFERENCES DIM_ARTICLE(ARTICLE_ID),
+    FOREIGN KEY (CUSTOMER_ID) REFERENCES DIM_CUSTOMER(CUSTOMER_ID)
+);
+
+INSERT INTO DIM_CUSTOMER (CUSTOMER_ID, CUSTOMER_NAME, CUSTOMER_REGION)
+SELECT SEQ4() AS CUSTOMER_ID,
+       'Customer ' || SEQ4() AS CUSTOMER_NAME,
+       CASE MOD(SEQ4(), 5)
+            WHEN 0 THEN 'North'
+            WHEN 1 THEN 'South'
+            WHEN 2 THEN 'East'
+            WHEN 3 THEN 'West'
+            ELSE 'Central'
+       END AS CUSTOMER_REGION
+FROM TABLE(GENERATOR(ROWCOUNT => 5000));
+
+
+INSERT INTO FACT_SALES (SALE_ID, ARTICLE_ID, DATE_SALES, CUSTOMER_ID, QUANTITY_SOLD, TOTAL_PRICE)
+SELECT SEQ4() AS SALE_ID,
+       A.ARTICLE_ID,
+       DATEADD(DAY, UNIFORM(-1095, 0, RANDOM()), CURRENT_DATE) AS DATE_SALES,  
+       UNIFORM(1, 5000, RANDOM()) AS CUSTOMER_ID,   -- Random date
+       UNIFORM(1, 10, RANDOM()) AS QUANTITY_SOLD,  -- Random quantity (1-10)
+       QUANTITY_SOLD * A.ARTICLE_PRICE AS TOTAL_PRICE  -- Fixed price from DIM_ARTICLE
+FROM DIM_ARTICLE A
+JOIN TABLE(GENERATOR(ROWCOUNT => 10000)) ON TRUE
+ORDER BY DATE_SALES;  -- Randomize sales order
+
+
+create stage semantic directory = (enable = TRUE);
+
+COPY FILES 
+    INTO @semantic
+    FROM @CC_QUICKSTART_CORTEX_SEARCH_DOCS_TRU.PUBLIC.git_repo_chatbot/branches/main/
+    FILES =('sales_semantic.yaml');
+
+CREATE OR REPLACE CORTEX SEARCH SERVICE article_name_search_service
+  ON ARTICLE_DIMENSION
+  WAREHOUSE = compute_wh
+  TARGET_LAG = '1 hour'
+  AS (
+      SELECT DISTINCT ARTICLE_NAME AS ARTICLE_DIMENSION FROM DIM_ARTICLE
+  );
+
+  

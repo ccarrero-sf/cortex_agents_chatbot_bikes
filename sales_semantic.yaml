@@ -1,0 +1,205 @@
+name: sales_semantic
+description: Semantic model for sales for different products. We have a table with fact sales data, another table with products or articles and another one with customer information.
+tables:
+  - name: FACT_SALES
+    base_table:
+      database: CC_QUICKSTART_CORTEX_SEARCH_DOCS_TRU
+      schema: PUBLIC
+      table: FACT_SALES
+    dimensions:
+      - name: SALE_ID
+        expr: SALE_ID
+        data_type: NUMBER(38,0)
+        description: Unique identifier for each sale transaction.
+        sample_values:
+          - '0'
+          - '1'
+          - '2'
+        synonyms:
+          - transaction_id
+          - sales_identifier
+          - order_id
+          - sale_identifier
+          - transaction_number
+      - name: ARTICLE_ID
+        expr: ARTICLE_ID
+        data_type: NUMBER(38,0)
+        description: Unique identifier for each article or product sold.
+        sample_values:
+          - '6'
+          - '4'
+          - '5'
+        synonyms:
+          - item_id
+          - product_id
+          - article_key
+          - item_key
+          - product_identifier
+      - name: CUSTOMER_ID
+        expr: CUSTOMER_ID
+        data_type: NUMBER(38,0)
+        description: Unique identifier for each customer who has made a sale.
+        sample_values:
+          - '22'
+          - '4120'
+          - '2806'
+        synonyms:
+          - client_id
+          - customer_code
+          - buyer_id
+          - account_id
+          - user_id
+    time_dimensions:
+      - name: DATE_SALES
+        expr: DATE_SALES
+        data_type: DATE
+        description: Date of sales transaction, representing the point in time when a sale was made.
+        sample_values:
+          - '2022-02-16'
+          - '2022-02-17'
+          - '2022-02-18'
+        synonyms:
+          - sales_date
+          - transaction_date
+          - purchase_date
+          - order_date
+          - sale_timestamp
+    measures:
+      - name: QUANTITY_SOLD
+        expr: QUANTITY_SOLD
+        data_type: NUMBER(38,0)
+        description: The total number of items sold in a particular transaction or time period.
+        sample_values:
+          - '3'
+          - '4'
+          - '7'
+        synonyms:
+          - units_sold
+          - quantity_purchased
+          - sales_volume
+          - item_count
+          - amount_sold
+          - volume_of_sales
+      - name: TOTAL_PRICE
+        expr: TOTAL_PRICE
+        data_type: FLOAT
+        description: The total amount of money paid by customers for a particular sale or set of sales.
+        sample_values:
+          - '2370'
+          - '3160'
+          - '70000'
+        synonyms:
+          - total_cost
+          - sale_amount
+          - price_total
+          - amount_paid
+          - total_revenue
+          - total_sale_value
+        default_aggregation: 1
+    primary_key:
+      columns:
+        - ARTICLE_ID
+        - CUSTOMER_ID
+  - name: DIM_ARTICLE
+    base_table:
+      database: CC_QUICKSTART_CORTEX_SEARCH_DOCS_TRU
+      schema: PUBLIC
+      table: DIM_ARTICLE
+    dimensions:
+      - name: ARTICLE_NAME
+        expr: ARTICLE_NAME
+        data_type: VARCHAR(16777216)
+        description: This column stores the names of various bicycle products offered by the company, providing a descriptive title for each article or bike model.
+        sample_values:
+          - Mondracer Infant Bike
+          - Premium Bycycle
+          - The Ultimate Downhill Bike
+        synonyms:
+          - product_title
+          - item_name
+          - article_title
+          - product_description
+          - item_description
+        cortex_search_service:
+          database: CC_QUICKSTART_CORTEX_SEARCH_DOCS_TRU
+          schema: PUBLIC
+          service: ARTICLE_NAME_SEARCH_SERVICE
+      - name: ARTICLE_ID
+        expr: ARTICLE_ID
+        data_type: NUMBER(38,0)
+        description: ''
+    measures:
+      - name: ARTICLE_PRICE
+        expr: ARTICLE_PRICE
+        data_type: FLOAT
+        description: The price of each article in the product catalog.
+        sample_values:
+          - '3000'
+          - '9000'
+          - '10000'
+        synonyms:
+          - item_cost
+          - unit_price
+          - article_value
+          - selling_price
+          - list_price
+          - wholesale_price
+          - retail_price
+    primary_key:
+      columns:
+        - ARTICLE_ID
+    description: Table with articles or product names
+    synonyms:
+      - products
+      - bikes
+      - snow gears
+  - name: DIM_CUSTOMER
+    base_table:
+      database: CC_QUICKSTART_CORTEX_SEARCH_DOCS_TRU
+      schema: PUBLIC
+      table: DIM_CUSTOMER
+    dimensions:
+      - name: CUSTOMER_NAME
+        expr: CUSTOMER_NAME
+        data_type: VARCHAR(16777216)
+        description: 'The name of the customer, which can be one of the following: Customer 0, Customer 1, or Customer 2.'
+        sample_values:
+          - Customer 0
+          - Customer 1
+          - Customer 2
+        synonyms:
+          - client_name
+          - customer_title
+          - account_holder
+          - client_title
+          - account_name
+          - customer_label
+      - name: CUSTOMER_ID
+        expr: CUSTOMER_ID
+        data_type: NUMBER(38,0)
+        description: ''
+    measures:
+      - name: CUSTOMER_REGION
+        expr: CUSTOMER_REGION
+        data_type: VARCHAR(16777216)
+        description: ''
+    primary_key:
+      columns:
+        - CUSTOMER_ID
+relationships:
+  - name: join_article
+    join_type: left_outer
+    relationship_type: many_to_one
+    left_table: FACT_SALES
+    relationship_columns:
+      - left_column: ARTICLE_ID
+        right_column: ARTICLE_ID
+    right_table: DIM_ARTICLE
+  - name: join_customer
+    join_type: left_outer
+    relationship_type: many_to_one
+    left_table: FACT_SALES
+    relationship_columns:
+      - left_column: CUSTOMER_ID
+        right_column: CUSTOMER_ID
+    right_table: DIM_CUSTOMER
