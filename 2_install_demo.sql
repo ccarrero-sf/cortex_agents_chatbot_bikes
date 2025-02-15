@@ -1,13 +1,13 @@
 
 
-USE DATABASE CC_QUICKSTART_CORTEX_SEARCH_DOCS_TRU;
+USE DATABASE CC_QUICKSTART_CORTEX_AGENTS;
 USE SCHEMA PUBLIC;
 
 create or replace stage docs ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE') DIRECTORY = ( ENABLE = true );
 
 COPY FILES
     INTO @DOCS/
-    FROM @CC_QUICKSTART_CORTEX_SEARCH_DOCS_TRU.PUBLIC.git_repo_chatbot/branches/main/docs/
+    FROM @CC_QUICKSTART_CORTEX_AGENTS.PUBLIC.git_repo_chatbot/branches/main/docs/
     PATTERN='.*[.]pdf';
 
 
@@ -52,7 +52,6 @@ create or replace TABLE DOCS_CHUNKS_TABLE (
     CHUNK VARCHAR(16777216), -- Piece of text
     CATEGORY VARCHAR(16777216) -- Will hold the document category to enable filtering
 );
-
 
 insert into docs_chunks_table (relative_path, size, file_url,
                             scoped_file_url, chunk)
@@ -122,7 +121,7 @@ COMMENT = '{"origin": "sf_chatbot",
 
 COPY FILES 
     INTO @STREAMLIT_STAGE
-    FROM @CC_QUICKSTART_CORTEX_SEARCH_DOCS_TRU.PUBLIC.git_repo_chatbot/branches/main/
+    FROM @CC_QUICKSTART_CORTEX_AGENTS.PUBLIC.git_repo_chatbot/branches/main/
     FILES =('streamlit_chatbot.py', 'environment.yml');
 
 ALTER STAGE STREAMLIT_STAGE REFRESH;
@@ -203,7 +202,7 @@ create stage semantic directory = (enable = TRUE);
 
 COPY FILES 
     INTO @semantic
-    FROM @CC_QUICKSTART_CORTEX_SEARCH_DOCS_TRU.PUBLIC.git_repo_chatbot/branches/main/
+    FROM @CC_QUICKSTART_CORTEX_AGENTS.PUBLIC.git_repo_chatbot/branches/main/
     FILES =('sales_semantic.yaml');
 
 CREATE OR REPLACE CORTEX SEARCH SERVICE article_name_search_service
@@ -213,5 +212,6 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE article_name_search_service
   AS (
       SELECT DISTINCT ARTICLE_NAME AS ARTICLE_DIMENSION FROM DIM_ARTICLE
   );
+
 
   
