@@ -8,4 +8,4 @@ dependencies:
 - trulens-core=1.2.9
 - trulens-feedback=1.2.11
 - trulens-providers-cortex=1.2.11
-- streamlit_extras
+- streamlit-extras=0.4.0
