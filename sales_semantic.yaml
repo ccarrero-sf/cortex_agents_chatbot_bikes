@@ -3,7 +3,7 @@ description: Semantic model for sales for different products. We have a table wi
 tables:
   - name: FACT_SALES
     base_table:
-      database: CC_QUICKSTART_CORTEX_SEARCH_DOCS_TRU
+      database: CC_QUICKSTART_CORTEX_AGENTS
       schema: PUBLIC
       table: FACT_SALES
     dimensions:
